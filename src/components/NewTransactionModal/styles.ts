@@ -92,7 +92,7 @@ export const ModalButton = styled.button<ModalButtonProps>`
     display: inline-block;
     margin-left: 1rem;
     font-size: 1rem;
-    color: va(--text-title);
+    color: var(--text-title);
   }
 
 `
