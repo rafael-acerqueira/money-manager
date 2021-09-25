@@ -1,10 +1,16 @@
-import { useState, FormEvent } from 'react'
+import { useState, useContext, FormEvent } from 'react'
+
 import Modal from 'react-modal'
+import { TransactionsContext } from '../../TransactionsContext'
+import { api } from '../../services/api'
+
 import incomeImg from '../../assets/income.svg'
 import outcomeImg from '../../assets/outcome.svg'
 import closeImg from '../../assets/close.svg'
+
 import { Container, TransactionTypeContainer, ModalButton } from './styles'
-import { api } from '../../services/api'
+
+
 
 
 interface NewTransactionModalProps {
@@ -15,21 +21,28 @@ interface NewTransactionModalProps {
 
 export const NewTransactionModal = ({ isOpen, onRequestClose } : NewTransactionModalProps) => {
 
+  const { createTransaction } = useContext(TransactionsContext)
+
   const [type, setType] = useState('deposit')
   const [title, setTitle] = useState('')
   const [category, setCategory] = useState('')
   const [value, setValue] = useState(0)
 
-  const handleCreateNewTransaction = (event: FormEvent) => {
+  const handleCreateNewTransaction = async(event: FormEvent) => {
     event.preventDefault();
-    const data = {
+
+    await createTransaction({
       title,
+      value,
       category,
-      value
-    }
+      type
+    })
 
-    api.post('/transactions', data)
-
+    setTitle('')
+    setCategory('')
+    setValue(0)
+    setType('deposit')
+    onRequestClose()
   }
 
   return (
@@ -76,8 +89,8 @@ export const NewTransactionModal = ({ isOpen, onRequestClose } : NewTransactionM
 
           <ModalButton
             type="button"
-            onClick={() => setType('widthdraw')}
-            isActive={type === 'widthdraw'}
+            onClick={() => setType('withdraw')}
+            isActive={type === 'withdraw'}
             activeColor='red'
           >
             <img src={outcomeImg} alt="Saída" />
